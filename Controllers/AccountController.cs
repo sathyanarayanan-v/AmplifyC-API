@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,8 +16,10 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
-        public AccountController(DataContext context, ITokenService tokenService)
+        private readonly IMailService _mailService;
+        public AccountController(DataContext context, ITokenService tokenService, IMailService mailService)
         {
+            _mailService = mailService;
             _tokenService = tokenService;
             _context = context;
 
@@ -28,11 +31,12 @@ namespace API.Controllers
         {
             using var hmac = new HMACSHA512();
 
-            if (await UserExists(registerDto.username)) return BadRequest("Oops. Username is taken");
+            if (await UserExists(registerDto.username, registerDto.email)) return BadRequest("Oops. Username is taken");
 
             var user = new AppUser
             {
                 UserName = registerDto.username.ToLower(),
+                Email = registerDto.email.ToLower(),
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.password)),
                 PasswordSalt = hmac.Key,
 
@@ -74,11 +78,41 @@ namespace API.Controllers
         }
 
 
-        private async Task<bool> UserExists(string username)
+        private async Task<bool> UserExists(string username, string email)
         {
-            return await _context.Users.AnyAsync(user => user.UserName.ToLower() == username.ToLower());
+            return await _context.Users.AnyAsync(user => user.UserName.ToLower() == username.ToLower() && (user.Email.ToLower() == email.ToLower()));
         }
 
+        private async Task<AppUser> FindUserByEmail(string email)
+        {
+            return await _context.Users.SingleOrDefaultAsync<AppUser>(user => user.Email == email.ToLower());
+        }
+
+        [Authorize]
+        [HttpPost("forgot-password/send-mail")]
+        public async Task<ActionResult<string>> forgotPassword([FromQuery] FPCodeGenDto fPCodeGenDto)
+        {
+
+
+            AppUser user = await FindUserByEmail(fPCodeGenDto.email);
+            if (user == null)
+            {
+                return BadRequest("Email address not found");
+            }
+            Random generator = new Random();
+            String forgotPasswordCode = generator.Next(0, 1000000).ToString("D6");
+
+            user.FpCode = forgotPasswordCode;
+            user.FpCodeExpiry = DateTimeOffset.Now.AddMinutes(15).ToUnixTimeSeconds();
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            String emailBody = "Your verification code for AmplifyC is <b>" + forgotPasswordCode + "</b>. <br/><br/> This code will expire in 15 minutes.<br/><br/> This is an automatic generated email. Do not reply to this email.";
+            _mailService.sendMail(user.UserName, fPCodeGenDto.email, "Forgot Password mail from AmplifyC", emailBody);
+            return "Email sent to " + fPCodeGenDto.email + ". Kindly check your inbox.";
+
+        }
 
     }
 }

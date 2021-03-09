@@ -1,3 +1,4 @@
+using API.classes;
 using API.Data;
 using API.Interfaces;
 using API.Services;
@@ -16,6 +17,9 @@ namespace API.Extensions
                options.UseSqlite(config.GetConnectionString("DefaultConnection"));
            });
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IMailService, MailService>();
+
+            services.Configure<EmailConfig>(config.GetSection("EmailConfig"));
             return services;
         }
     }

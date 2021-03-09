@@ -8,5 +8,10 @@ namespace API.DTOs
 
         [Required]
         public string password { get; set; }
+
+        [Required]
+        [EmailAddress]
+
+        public string email { get; set; }
     }
 }

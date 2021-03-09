@@ -33,7 +33,6 @@ namespace API.Extensions
         private static X509SecurityKey GetIssuerSigningKey()
         {
             var publicCert = new X509Certificate2("jwt_rsa_pub.cer");
-            Console.WriteLine(publicCert);
             return new X509SecurityKey(publicCert);
         }
 
