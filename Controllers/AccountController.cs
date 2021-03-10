@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {
@@ -88,7 +89,6 @@ namespace API.Controllers
             return await _context.Users.SingleOrDefaultAsync<AppUser>(user => user.Email == email.ToLower());
         }
 
-        [Authorize]
         [HttpPost("forgot-password/send-mail")]
         public async Task<ActionResult<string>> forgotPassword([FromQuery] FPCodeGenDto fPCodeGenDto)
         {
@@ -111,6 +111,42 @@ namespace API.Controllers
             String emailBody = "Your verification code for AmplifyC is <b>" + forgotPasswordCode + "</b>. <br/><br/> This code will expire in 15 minutes.<br/><br/> This is an automatic generated email. Do not reply to this email.";
             _mailService.sendMail(user.UserName, fPCodeGenDto.email, "Forgot Password mail from AmplifyC", emailBody);
             return "Email sent to " + fPCodeGenDto.email + ". Kindly check your inbox.";
+
+        }
+
+        [HttpPost("forgot-password/verify-email")]
+
+        public async Task<ActionResult<string>> verifyFpCode([FromBody] VerifyFPCodeDto verifyFPCodeDto)
+        {
+            AppUser user = await FindUserByEmail(verifyFPCodeDto.email);
+            if (user == null)
+            {
+                return BadRequest("Email address not found");
+            }
+
+            long currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+            if (currentTime >= user.FpCodeExpiry)
+            {
+                return BadRequest("Your code expired");
+            }
+
+            if (user.FpCode.Equals("0000000"))
+            {
+                return BadRequest("Invalid request. Please request for verification code again.");
+            }
+
+            if (!verifyFPCodeDto.code.Equals(user.FpCode))
+            {
+                return BadRequest("Invalid code provided");
+            }
+
+            user.FpCode = "0000000"; //Todo: Hardcoded invalid code to invalidate further requests. Need to find good approach
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return "Voila! Please set your new password";
 
         }
 
