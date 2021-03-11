@@ -10,6 +10,9 @@ using System;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -26,6 +29,23 @@ namespace API.Controllers
 
         }
 
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<UserResponse>> GetCurrentUser()
+        {
+            string b64 = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            string idUsername = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(b64));
+            int id = Int32.Parse(idUsername.Split("_")[0]);
+            AppUser user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);
+            return new UserResponse
+            {
+                username = user.UserName,
+                email = user.Email,
+                id = user.Id
+            };
+
+        }
 
         [HttpPost("register")]
         public async Task<ActionResult<LoginResponseDto>> Register(AccountRegisterDto registerDto)

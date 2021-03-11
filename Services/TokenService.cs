@@ -32,6 +32,7 @@ namespace API.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat,issued),
                     new Claim(JwtRegisteredClaimNames.Exp,expire),
+                    new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Iss,Convert.ToBase64String(Encoding.UTF8.GetBytes("AmplifyC Authentication API"))),
                     new Claim(JwtRegisteredClaimNames.Aud,Convert.ToBase64String(Encoding.UTF8.GetBytes("AmplifyC Client")))
                 };
