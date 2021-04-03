@@ -78,7 +78,7 @@ namespace API.Controllers
         public async Task<ActionResult<LoginResponseDto>> login(LoginDto loginDto)
         {
             var user = await _context.Users.SingleOrDefaultAsync(user => user.UserName == loginDto.username);
-            if (user == null) return Unauthorized("Invalid Username");
+            if (user == null) return Unauthorized("You have provided invalid username");
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
 
@@ -86,7 +86,7 @@ namespace API.Controllers
 
             for (int i = 0; i < computedHash.Length; i++)
             {
-                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
+                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("You have provided invalid password");
             }
 
             var token = _tokenService.signToken(user);
@@ -117,7 +117,7 @@ namespace API.Controllers
             AppUser user = await FindUserByEmail(fPCodeGenDto.email);
             if (user == null)
             {
-                return BadRequest("Email address not found");
+                return BadRequest("Please enter your registered email addresss");
             }
             Random generator = new Random();
             String forgotPasswordCode = generator.Next(0, 1000000).ToString("D6");
@@ -169,6 +169,31 @@ namespace API.Controllers
             return "Voila! Please set your new password";
 
         }
+
+        [HttpPost("forgot-password/reset-password")]
+
+        public async Task<ActionResult<string>> resetPassword([FromBody] ResetPasswordDto resetPasswordDto, [FromHeader] string AuthMail)
+        {
+            if (!resetPasswordDto.pwd.Equals(resetPasswordDto.cnfrmPwd))
+            {
+                return BadRequest("Passwords do not match");
+            }
+
+            AppUser user = await FindUserByEmail(AuthMail);
+            if (user == null)
+            {
+                return BadRequest("Invalid email address");
+            }
+            using var hmac = new HMACSHA512();
+
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(resetPasswordDto.pwd));
+            user.PasswordSalt = hmac.Key;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return "Password reset done. Please login to continue";
+        }
+
 
     }
 }
