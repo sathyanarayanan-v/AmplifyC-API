@@ -10,6 +10,7 @@ import { LoggerInterceptor } from './shared/interceptors/logger/logger.intercept
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { SystemsModule } from './systems/systems.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SystemsModule } from './systems/systems.module';
     UsersModule,
     SharedModule,
     SystemsModule,
+    CompaniesModule,
   ],
   controllers: [AppController],
   providers: [
