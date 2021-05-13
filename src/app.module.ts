@@ -1,3 +1,4 @@
+import { SharedModule } from './shared/shared.module';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -8,6 +9,7 @@ import { HttpInterceptor } from './shared/interceptors/http/http.interceptor';
 import { LoggerInterceptor } from './shared/interceptors/logger/logger.interceptor';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
+import { SystemsModule } from './systems/systems.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { UsersModule } from './users/users.module';
     }),
     AuthModule,
     UsersModule,
+    SharedModule,
+    SystemsModule,
   ],
   controllers: [AppController],
   providers: [
