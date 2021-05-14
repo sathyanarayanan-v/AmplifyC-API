@@ -1,11 +1,33 @@
+import { loggerInstance } from 'src/logger';
+import { System } from './../systems/entities/system.entity';
+import { User } from './../users/entities/user.entity';
+import { CompaniesRepository } from './companies.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
-  create(createCompanyDto: CreateCompanyDto) {
-    return 'This action adds a new company';
+  constructor(private companiesRepository: CompaniesRepository) {}
+  async create(user: any, createCompanyDto: CreateCompanyDto) {
+    try {
+      const company = await this.companiesRepository.findCompanyByCin(
+        createCompanyDto.incorporation_number,
+      );
+      loggerInstance.log(
+        `Company ${company.company_name} already exists. Not creating a new record`,
+      );
+      if (company) return company;
+    } catch (error) {
+      loggerInstance.log(error, 'error');
+    }
+    if (user.pat) {
+      createCompanyDto.createdByModel = System.name;
+    } else {
+      createCompanyDto.createdByModel = User.name;
+    }
+    createCompanyDto.created_by = user._id;
+    return this.companiesRepository.create(createCompanyDto);
   }
 
   findAll() {

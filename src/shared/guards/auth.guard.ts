@@ -42,6 +42,9 @@ export class PatAuthGuard implements CanActivate {
   }
 
   private async validateToken(auth: string) {
+    if (auth.split(' ')[0] === 'Bearer') {
+      return true;
+    }
     if (auth.split(' ')[0] !== 'Basic') {
       throw new UnauthorizedException();
     }
