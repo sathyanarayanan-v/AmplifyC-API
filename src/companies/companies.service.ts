@@ -45,4 +45,15 @@ export class CompaniesService {
   remove(id: number) {
     return `This action removes a #${id} company`;
   }
+
+  updateWithCin(
+    incorporation_number: string,
+    updateCompanyDto: UpdateCompanyDto,
+  ) {
+    return this.companiesRepository.update(
+      null,
+      updateCompanyDto,
+      incorporation_number,
+    );
+  }
 }

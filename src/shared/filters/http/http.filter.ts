@@ -19,10 +19,13 @@ export class HttpErrorFilter implements ExceptionFilter {
     const status = exception.getStatus
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
+    loggerInstance.log(exception, 'error');
     const error_response = {
       code: status,
       payload:
-        exception.message || 'Internal server error. Please try again later',
+        status !== HttpStatus.INTERNAL_SERVER_ERROR
+          ? exception.message
+          : 'Something went wrong. Please try again later',
       error: true,
       url,
       method,

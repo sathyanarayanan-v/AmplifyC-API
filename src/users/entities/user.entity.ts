@@ -8,6 +8,7 @@ export class User {
   @Prop({
     type: MongooseSchema.Types.String,
     required: true,
+    unique: true,
   })
   username: string;
 

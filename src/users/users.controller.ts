@@ -1,3 +1,6 @@
+import { ValidationPipe } from './../shared/pipes/validator.pipe';
+import { PatAuthGuard } from './../shared/guards/auth.guard';
+import { System } from './../systems/entities/system.entity';
 import {
   Controller,
   Get,
@@ -6,10 +9,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, CreateUserBySystemDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CurrentUser } from 'src/shared/decorators/user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -38,5 +44,16 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  // System Endpoint
+  @Post('create')
+  @UsePipes(new ValidationPipe())
+  @UseGuards(PatAuthGuard)
+  createUser(
+    @CurrentUser() user: System,
+    @Body() createUserBySystemDto: CreateUserBySystemDto,
+  ) {
+    return this.usersService.createUserBySystem(createUserBySystemDto);
   }
 }

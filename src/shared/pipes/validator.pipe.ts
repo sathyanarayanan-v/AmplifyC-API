@@ -13,6 +13,12 @@ export class ValidationPipe implements PipeTransform<any> {
   constructor() {}
 
   async transform(value: any, metadata: ArgumentMetadata) {
+    if (!value) {
+      throw new HttpException(
+        'Validation Failed. No Body provided.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     if (value.data) {
       value = JSON.parse(value.data);
     }

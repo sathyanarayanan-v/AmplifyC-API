@@ -11,6 +11,11 @@ export class CreateUserDto {
   password: string;
 }
 
+export class CreateUserBySystemDto {
+  @IsEmail()
+  username: string;
+}
+
 export class NewUser extends CreateUserDto {
   passwordHash: string;
   passwordSalt: string;

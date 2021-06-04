@@ -11,6 +11,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/shared/decorators/user.decorator';
 import { CompaniesService } from './companies.service';
@@ -57,5 +58,18 @@ export class CompaniesController {
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
     return this.companiesService.create(user, createCompanyDto);
+  }
+
+  // System Endpoint
+  @UseGuards(PatAuthGuard)
+  @Put('update/:incorporation_number')
+  updateCompany(
+    @Param('incorporation_number') incorporation_number: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
+    return this.companiesService.updateWithCin(
+      incorporation_number,
+      updateCompanyDto,
+    );
   }
 }

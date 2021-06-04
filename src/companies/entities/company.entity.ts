@@ -18,7 +18,7 @@ export class Company {
     type: MongooseSchema.Types.Date,
     required: false,
   })
-  incorporation_date?: Date;
+  date_of_incorporation?: Date;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -60,25 +60,31 @@ export class Company {
     type: MongooseSchema.Types.Number,
     required: false,
   })
+  total_contribution: number;
+
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    required: false,
+  })
   paid_capital?: number;
-
-  @Prop({
-    type: MongooseSchema.Types.Number,
-    required: false,
-  })
-  number_of_members?: number;
-
-  @Prop({
-    type: MongooseSchema.Types.Number,
-    required: false,
-  })
-  activity_desc?: number;
 
   @Prop({
     type: MongooseSchema.Types.String,
     required: false,
   })
-  reg_off_add?: string;
+  number_of_members?: String;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  activity_description?: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  registered_office_address?: string;
 
   @Prop({
     type: MongooseSchema.Types.String,

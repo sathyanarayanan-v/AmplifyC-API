@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { loggerInstance } from 'src/logger';
 import { SharedService } from 'src/shared/shared.service';
-import { CreateUserDto, NewUser } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  NewUser,
+  CreateUserBySystemDto,
+} from './dto/create-user.dto';
 import { UpdateUserDoc, UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 
@@ -11,7 +16,15 @@ export class UsersService {
     private sharedService: SharedService,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const user = await this.findOneByEmail(createUserDto.email);
+      if (user) {
+        return user;
+      }
+    } catch (error) {
+      // log error
+    }
     const { salt, passwordHash } = this.sharedService.saltHashPassword(
       createUserDto.password,
     );
@@ -57,5 +70,40 @@ export class UsersService {
 
   findOneByEmail(email: string) {
     return this.userRepository.findOneByEmail(email);
+  }
+
+  async createUserBySystem(userDto: CreateUserBySystemDto) {
+    const { username } = userDto;
+    let characters = username.split('@')[0] + username.split('@')[1];
+    const password = this.generatePassword(username.length, characters);
+
+    try {
+      // Todo: Enable this option on only production
+      // const html = `Your credentials for amplifyc is <li>username: ${username}
+      // <li>password: ${password}</li>`;
+      // await this.sharedService.sendMail(
+      //   'svvsathyanarayanan@gmail.com',
+      //   username,
+      //   'Welcome to AmplifyC',
+      //   'AmplifyC',
+      //   html,
+      // );
+      await this.create({ email: username, password, username });
+      return;
+    } catch (error) {
+      loggerInstance.log(error, 'error');
+      throw new InternalServerErrorException();
+    }
+  }
+
+  private generatePassword(length: number, characters: string) {
+    const result = [];
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result.push(
+        characters.charAt(Math.floor(Math.random() * charactersLength)),
+      );
+    }
+    return result.join('');
   }
 }
