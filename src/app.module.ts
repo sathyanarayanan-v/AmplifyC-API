@@ -11,6 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { SystemsModule } from './systems/systems.module';
 import { CompaniesModule } from './companies/companies.module';
+import { DirectorsModule } from './directors/directors.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CompaniesModule } from './companies/companies.module';
     SharedModule,
     SystemsModule,
     CompaniesModule,
+    DirectorsModule,
   ],
   controllers: [AppController],
   providers: [

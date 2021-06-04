@@ -56,4 +56,8 @@ export class CompaniesService {
       incorporation_number,
     );
   }
+
+  findByCin(incorporation_number: string) {
+    return this.companiesRepository.findCompanyByCin(incorporation_number);
+  }
 }
