@@ -8,6 +8,16 @@ import {
 } from '@nestjs/common';
 import { loggerInstance } from '../../../logger';
 
+const methodToMessage = {
+  POST: 'creating',
+  PUT: 'updating',
+  PATCH: 'updating',
+  GET: 'getting',
+  DELETE: 'deleting',
+};
+
+const getControllerName = (url: string) =>
+  url.split(`/api/v1/`)[1].split('/')[0];
 @Catch()
 export class HttpErrorFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -20,12 +30,15 @@ export class HttpErrorFilter implements ExceptionFilter {
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
     loggerInstance.log(exception, 'error');
+
     const error_response = {
       code: status,
       payload:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
           ? exception.message
-          : 'Something went wrong. Please try again later',
+          : `Something went wrong in ${
+              methodToMessage[method]
+            } ${getControllerName(url)}. Please try again later`,
       error: true,
       url,
       method,

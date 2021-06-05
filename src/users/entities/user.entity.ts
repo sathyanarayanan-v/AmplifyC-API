@@ -42,3 +42,6 @@ export class User {
   })
   fpCodeExpiry: string;
 }
+export class IUser extends User {
+  _id: string;
+}
