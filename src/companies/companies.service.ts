@@ -1,3 +1,4 @@
+import { convertDateStringToDate } from 'src/utils';
 import { loggerInstance } from 'src/logger';
 import { System } from './../systems/entities/system.entity';
 import { User } from './../users/entities/user.entity';
@@ -48,11 +49,27 @@ export class CompaniesService {
 
   updateWithCin(
     incorporation_number: string,
-    updateCompanyDto: UpdateCompanyDto,
+    updateCompanyDto: UpdateCompanyDto | any,
   ) {
+    const modifiedUpdateCompanyDto = {
+      ...updateCompanyDto,
+      listed: updateCompanyDto['listed'] === 'true',
+    };
+    if (updateCompanyDto.date_of_agm) {
+      modifiedUpdateCompanyDto['date_of_agm'] = convertDateStringToDate(
+        updateCompanyDto.date_of_agm,
+        'DD/MM/YYYY',
+      );
+    }
+    if (updateCompanyDto.date_of_bs) {
+      modifiedUpdateCompanyDto['date_of_bs'] = convertDateStringToDate(
+        updateCompanyDto.date_of_bs,
+        'DD/MM/YYYY',
+      );
+    }
     return this.companiesRepository.update(
       null,
-      updateCompanyDto,
+      modifiedUpdateCompanyDto,
       incorporation_number,
     );
   }
