@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module';
 import { SystemsModule } from './systems/systems.module';
 import { CompaniesModule } from './companies/companies.module';
 import { DirectorsModule } from './directors/directors.module';
+import { AffiliatesModule } from './affiliates/affiliates.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { DirectorsModule } from './directors/directors.module';
     SystemsModule,
     CompaniesModule,
     DirectorsModule,
+    AffiliatesModule,
   ],
   controllers: [AppController],
   providers: [
