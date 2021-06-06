@@ -9,6 +9,7 @@ import { AffiliatesController } from './affiliates.controller';
 @Module({
   controllers: [AffiliatesController],
   providers: [AffiliatesService, AffiliateReporsitory],
+  exports: [AffiliatesService, AffiliateReporsitory],
   imports: [
     MongooseModule.forFeature([
       {

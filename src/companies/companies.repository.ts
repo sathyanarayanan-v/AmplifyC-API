@@ -37,4 +37,8 @@ export class CompaniesRepository {
   findCompanyByCin(incorporation_number: string) {
     return this.companyModel.findOne({ incorporation_number }).lean();
   }
+
+  findOne(id) {
+    return this.companyModel.findById(id).lean();
+  }
 }

@@ -11,6 +11,7 @@ import { SystemsModule } from 'src/systems/systems.module';
 @Module({
   controllers: [CompaniesController],
   providers: [CompaniesService, CompaniesRepository],
+  exports: [CompaniesService, CompaniesRepository],
   imports: [
     MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
     SystemsModule,

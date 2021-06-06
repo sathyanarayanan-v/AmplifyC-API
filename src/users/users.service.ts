@@ -1,3 +1,5 @@
+import { CompaniesService } from './../companies/companies.service';
+import { AffiliatesService } from './../affiliates/affiliates.service';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { loggerInstance } from 'src/logger';
 import { SharedService } from 'src/shared/shared.service';
@@ -14,6 +16,8 @@ export class UsersService {
   constructor(
     private userRepository: UsersRepository,
     private sharedService: SharedService,
+    private affiliateService: AffiliatesService,
+    private companyService: CompaniesService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -38,6 +42,15 @@ export class UsersService {
 
   findAll() {
     return `This action returns all users`;
+  }
+
+  async findCompaniesForUser(id: string) {
+    const affiliatedCompanies = await this.affiliateService.findAll(id);
+    return Promise.all(
+      affiliatedCompanies.map((affiliate) =>
+        this.companyService.findOne(affiliate.company_id as string),
+      ),
+    );
   }
 
   findOne(id: number) {

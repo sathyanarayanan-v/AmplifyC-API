@@ -1,3 +1,7 @@
+import { CompaniesModule } from './../companies/companies.module';
+import { CompaniesService } from './../companies/companies.service';
+import { AffiliatesService } from './../affiliates/affiliates.service';
+import { AffiliatesModule } from './../affiliates/affiliates.module';
 import { SystemsModule } from 'src/systems/systems.module';
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -18,9 +22,16 @@ import { SharedModule } from 'src/shared/shared.module';
     ]),
     SharedModule,
     SystemsModule,
+    AffiliatesModule,
+    CompaniesModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
+  providers: [
+    UsersService,
+    UsersRepository,
+    AffiliatesService,
+    CompaniesService,
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}

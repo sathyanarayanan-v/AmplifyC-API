@@ -11,11 +11,13 @@ import {
   Delete,
   UseGuards,
   UsePipes,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, CreateUserBySystemDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CurrentUser } from 'src/shared/decorators/user.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
@@ -34,6 +36,15 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id/companies')
+  getCompaniesForUser(@Param('id') id: string, @CurrentUser() user: any) {
+    if (user._id.toString() === id) {
+      return this.usersService.findCompaniesForUser(id);
+    }
+    throw new ForbiddenException('Forbidden access');
   }
 
   @Patch(':id')

@@ -35,8 +35,8 @@ export class CompaniesService {
     return `This action returns all companies`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
+  findOne(id: string) {
+    return this.companiesRepository.findOne(id);
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {
