@@ -60,6 +60,15 @@ export class CompaniesController {
     return this.companiesService.create(user, createCompanyDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('name-search/:companyName')
+  searchCompanyName(
+    @CurrentUser() user: any,
+    @Param('companyName') company_name: string,
+  ) {
+    return this.companiesService.searchCompanyName(user, company_name);
+  }
+
   // System Endpoint
   @UseGuards(PatAuthGuard)
   @Put('update/:incorporation_number')

@@ -1,3 +1,4 @@
+import { SharedModule } from 'src/shared/shared.module';
 import { SystemsService } from 'src/systems/systems.service';
 import { Company } from './entities/company.entity';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,6 +16,7 @@ import { SystemsModule } from 'src/systems/systems.module';
   imports: [
     MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
     SystemsModule,
+    SharedModule,
   ],
 })
 export class CompaniesModule {}

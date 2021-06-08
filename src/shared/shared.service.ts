@@ -4,7 +4,7 @@ import * as nodemailer from 'nodemailer';
 import * as jwt from 'jsonwebtoken';
 import { jwtConstants } from '../auth/constants';
 import { loggerInstance } from 'src/logger';
-
+import mcaAxiosInstance from '../axios/mcaAxiosInstance';
 @Injectable()
 export class SharedService {
   constructor() {}
@@ -102,4 +102,44 @@ export class SharedService {
       });
     });
   };
+
+  async checkCompanyName(company_name: string) {
+    const company_name_response_text: {
+      errors?: Array<{ errorCode: string; errorDescription: string }>;
+      success: 'false' | 'true';
+      companyList: Array<{ companyID: string; companyName: string }>;
+    } = await mcaAxiosInstance.post(
+      process.env.COMPANY_NAME_SEARCH + company_name,
+    );
+    console.log(company_name_response_text);
+    const table_headers = [
+      {
+        text: 'S.No',
+        value: 'index',
+      },
+      {
+        text: 'Company ID',
+        value: 'companyID',
+        align: 'start',
+      },
+      {
+        text: 'Company Name',
+        value: 'companyName',
+      },
+    ];
+    if (company_name_response_text.success === 'true') {
+      const companies = company_name_response_text.companyList;
+      return {
+        table_headers,
+        companies: companies.map((data, idx) => ({ ...data, index: idx + 1 })),
+      };
+    } else {
+      return {
+        table_headers,
+        companies: [],
+        error: true,
+        message: 'No matching found!',
+      };
+    }
+  }
 }

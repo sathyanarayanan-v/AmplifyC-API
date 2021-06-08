@@ -1,3 +1,4 @@
+import { SharedService } from 'src/shared/shared.service';
 import { convertDateStringToDate } from 'src/utils';
 import { loggerInstance } from 'src/logger';
 import { System } from './../systems/entities/system.entity';
@@ -9,7 +10,10 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
-  constructor(private companiesRepository: CompaniesRepository) {}
+  constructor(
+    private companiesRepository: CompaniesRepository,
+    private sharedService: SharedService,
+  ) {}
   async create(user: any, createCompanyDto: CreateCompanyDto) {
     try {
       const company = await this.companiesRepository.findCompanyByCin(
@@ -76,5 +80,9 @@ export class CompaniesService {
 
   findByCin(incorporation_number: string) {
     return this.companiesRepository.findCompanyByCin(incorporation_number);
+  }
+
+  searchCompanyName(user: any, company_name: string) {
+    return this.sharedService.checkCompanyName(company_name);
   }
 }
