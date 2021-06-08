@@ -1,26 +1,28 @@
+import { GstRepository } from './gst.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateGstDto } from './dto/create-gst.dto';
 import { UpdateGstDto } from './dto/update-gst.dto';
 
 @Injectable()
 export class GstService {
+  constructor(private gstRepository: GstRepository) {}
   create(createGstDto: CreateGstDto) {
-    return 'This action adds a new gst';
+    return this.gstRepository.create(createGstDto);
   }
 
   findAll() {
-    return `This action returns all gst`;
+    return this.gstRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gst`;
+  findOne(id: string) {
+    return this.gstRepository.findOne(id);
   }
 
-  update(id: number, updateGstDto: UpdateGstDto) {
-    return `This action updates a #${id} gst`;
+  update(id: string, updateGstDto: UpdateGstDto) {
+    return this.gstRepository.update(id, updateGstDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gst`;
+  remove(id: string) {
+    return this.gstRepository.remove(id);
   }
 }
