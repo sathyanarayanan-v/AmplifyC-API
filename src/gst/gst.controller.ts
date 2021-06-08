@@ -8,10 +8,13 @@ import {
   Param,
   Delete,
   UseGuards,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { GstService } from './gst.service';
 import { CreateGstDto } from './dto/create-gst.dto';
 import { UpdateGstDto } from './dto/update-gst.dto';
+import { CurrentUser } from 'src/shared/decorators/user.decorator';
 
 @Controller('gst')
 export class GstController {
@@ -30,6 +33,18 @@ export class GstController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('captcha')
+  async getCaptcha(@CurrentUser() user: any) {
+    const gstCaptcha = await this.gstService.getCaptcha();
+    return {
+      image:
+        `/${user._id}/` +
+        Buffer.from(gstCaptcha.image, 'binary').toString('base64'),
+      idToken: gstCaptcha.captchaCookie,
+    };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.gstService.findOne(id);
@@ -45,5 +60,23 @@ export class GstController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.gstService.remove(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('pan')
+  createGst(
+    @CurrentUser() user: any,
+    @Body('pan') pan: string,
+    @Body('idToken') idToken: string,
+    @Body('captcha') captcha: string,
+    @Body('incorporation_number') incorporation_number: string,
+  ) {
+    return this.gstService.createGstWithPan(
+      user,
+      pan,
+      idToken,
+      captcha,
+      incorporation_number,
+    );
   }
 }

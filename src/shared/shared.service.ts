@@ -5,6 +5,7 @@ import * as jwt from 'jsonwebtoken';
 import { jwtConstants } from '../auth/constants';
 import { loggerInstance } from 'src/logger';
 import mcaAxiosInstance from '../axios/mcaAxiosInstance';
+import gstAxiosInstance from '../axios/gstAxiosInstance';
 @Injectable()
 export class SharedService {
   constructor() {}
@@ -140,6 +141,37 @@ export class SharedService {
         error: true,
         message: 'No matching found!',
       };
+    }
+  }
+
+  getGstCaptcha() {
+    return gstAxiosInstance.get('captcha', {
+      responseType: 'arraybuffer',
+    });
+  }
+
+  async searchGstByPan(
+    captcha: string,
+    panNO: string,
+    cookie: string,
+  ): Promise<Array<{ gstin: string; authStatus: string; stateCd: string }>> {
+    try {
+      const res = await gstAxiosInstance.post(
+        'api/get/gstndtls',
+        { captcha, panNO },
+        {
+          headers: {
+            Cookie: `CaptchaCookie=${cookie}`,
+          },
+        },
+      );
+      if (res.data.errorCode) {
+        return [];
+      }
+      return res.data.gstinResList;
+    } catch (err) {
+      loggerInstance.log(err, 'error', 'GSTSearchByPan');
+      return [];
     }
   }
 }

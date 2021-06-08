@@ -1,3 +1,4 @@
+import { SharedModule } from 'src/shared/shared.module';
 import { GstSchema } from './gst.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GstRepository } from './gst.repository';
@@ -17,6 +18,7 @@ import { Gst } from './entities/gst.entity';
         name: Gst.name,
       },
     ]),
+    SharedModule,
   ],
 })
 export class GstModule {}

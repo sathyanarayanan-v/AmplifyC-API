@@ -8,4 +8,5 @@ export class CreateGstDto {
   @IsString({ message: 'gst number is required' })
   @IsNotEmpty({ message: 'gst number is required' })
   gstin: string;
+  gstin_status?: string;
 }
