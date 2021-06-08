@@ -13,6 +13,7 @@ import { SystemsModule } from './systems/systems.module';
 import { CompaniesModule } from './companies/companies.module';
 import { DirectorsModule } from './directors/directors.module';
 import { AffiliatesModule } from './affiliates/affiliates.module';
+import { GstModule } from './gst/gst.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AffiliatesModule } from './affiliates/affiliates.module';
     CompaniesModule,
     DirectorsModule,
     AffiliatesModule,
+    GstModule,
   ],
   controllers: [AppController],
   providers: [
