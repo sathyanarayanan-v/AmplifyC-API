@@ -6,6 +6,7 @@ import { jwtConstants } from '../auth/constants';
 import { loggerInstance } from 'src/logger';
 import mcaAxiosInstance from '../axios/mcaAxiosInstance';
 import gstAxiosInstance from '../axios/gstAxiosInstance';
+import taskAxiosInstance from '../axios/taskAxiosInstance';
 @Injectable()
 export class SharedService {
   constructor() {}
@@ -173,5 +174,17 @@ export class SharedService {
       loggerInstance.log(err, 'error', 'GSTSearchByPan');
       return [];
     }
+  }
+
+  getCompanyMasterData(incorporation_number: string) {
+    return taskAxiosInstance.post('companies/master-data', {
+      incorporation_number,
+    });
+  }
+
+  getMcaFilings(incorporation_number: string) {
+    return taskAxiosInstance.post('companies/filings', {
+      incorporation_number,
+    });
   }
 }

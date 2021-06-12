@@ -14,6 +14,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { DirectorsModule } from './directors/directors.module';
 import { AffiliatesModule } from './affiliates/affiliates.module';
 import { GstModule } from './gst/gst.module';
+import { ToolsModule } from './tools/tools.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { GstModule } from './gst/gst.module';
     DirectorsModule,
     AffiliatesModule,
     GstModule,
+    ToolsModule,
   ],
   controllers: [AppController],
   providers: [
