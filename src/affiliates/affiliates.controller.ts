@@ -22,7 +22,7 @@ export class AffiliatesController {
 
   @UseGuards(AuthGuard('jwt'))
   @UsePipes(new ValidationPipe())
-  @Post(':id')
+  @Post('')
   create(@Body() createAffiliateDto: CreateAffiliateDto) {
     return this.affiliatesService.create(createAffiliateDto);
   }

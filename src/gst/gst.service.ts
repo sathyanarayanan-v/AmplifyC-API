@@ -1,6 +1,10 @@
 import { SharedService } from 'src/shared/shared.service';
 import { GstRepository } from './gst.repository';
-import { Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { CreateGstDto } from './dto/create-gst.dto';
 import { UpdateGstDto } from './dto/update-gst.dto';
 
@@ -31,16 +35,24 @@ export class GstService {
   }
 
   async getCaptcha(): Promise<any> {
-    const gstCaptcha = await this.sharedService.getGstCaptcha();
+    try {
+      const gstCaptcha = await this.sharedService.getGstCaptcha();
 
-    let captchaCookie = gstCaptcha.headers['set-cookie']
-      .find((x: string) => x.includes('CaptchaCookie'))
-      .split(';')[0]
-      .split('=')[1];
-    return {
-      image: gstCaptcha.data,
-      captchaCookie,
-    };
+      let captchaCookie = gstCaptcha.headers['set-cookie']
+        .find((x: string) => x.includes('CaptchaCookie'))
+        .split(';')[0]
+        .split('=')[1];
+      return {
+        image: gstCaptcha.data,
+        captchaCookie,
+      };
+    } catch (error) {
+      if (error.response.status === HttpStatus.SERVICE_UNAVAILABLE) {
+        throw new ServiceUnavailableException(
+          'Our portal is down for maintainance. Please come back later.',
+        );
+      }
+    }
   }
 
   async createGstWithPan(
