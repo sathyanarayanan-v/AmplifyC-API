@@ -1,6 +1,10 @@
 import { CompaniesService } from './../companies/companies.service';
 import { AffiliatesService } from './../affiliates/affiliates.service';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { loggerInstance } from 'src/logger';
 import { SharedService } from 'src/shared/shared.service';
 import {
@@ -8,7 +12,7 @@ import {
   NewUser,
   CreateUserBySystemDto,
 } from './dto/create-user.dto';
-import { UpdateUserDoc, UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDoc } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
@@ -21,14 +25,6 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    try {
-      const user = await this.findOneByEmail(createUserDto.email);
-      if (user) {
-        return user;
-      }
-    } catch (error) {
-      // log error
-    }
     const { salt, passwordHash } = this.sharedService.saltHashPassword(
       createUserDto.password,
     );
@@ -37,11 +33,14 @@ export class UsersService {
       passwordHash,
       passwordSalt: salt,
     };
-    return this.userRepository.create(newUser);
+    const user = await this.userRepository.create(newUser);
+    delete user.passwordHash;
+    delete user.passwordSalt;
+    return user;
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.findAll();
   }
 
   async findCompaniesForUser(id: string) {
@@ -118,5 +117,9 @@ export class UsersService {
       );
     }
     return result.join('');
+  }
+
+  findUserByUsername(username: string) {
+    return this.userRepository.findByUsername(username);
   }
 }

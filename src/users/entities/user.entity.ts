@@ -8,6 +8,12 @@ export class User {
   @Prop({
     type: MongooseSchema.Types.String,
     required: true,
+  })
+  name: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: true,
     unique: true,
   })
   username: string;
@@ -33,6 +39,7 @@ export class User {
   @Prop({
     type: MongooseSchema.Types.String,
     required: true,
+    unique: true,
   })
   email: string;
 

@@ -10,6 +10,9 @@ import { UpdateUserDoc } from './dto/update-user.dto';
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  findAll() {
+    return this.userModel.find().select(this.excludeFields).lean();
+  }
   excludeFields = ['-passwordHash', '-passwordSalt'];
   create(user: NewUser) {
     return new this.userModel(user).save({
@@ -39,5 +42,8 @@ export class UsersRepository {
       .findByIdAndUpdate(id, updateUserDoc, { new: true })
       .select(this.excludeFields)
       .lean();
+  }
+  findByUsername(username: string) {
+    return this.userModel.findOne({ username }).lean();
   }
 }

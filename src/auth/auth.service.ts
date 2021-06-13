@@ -33,8 +33,8 @@ export class AuthService {
   }
 
   async login(loginDto: LoginRequestDto) {
-    const user = await this.userService.findOneByEmail(loginDto.username);
-
+    const user = await this.userService.findUserByUsername(loginDto.username);
+    console.log(user);
     if (user) {
       const { passwordHash } = this.sharedService.getPasswordHash(
         user.passwordSalt,
