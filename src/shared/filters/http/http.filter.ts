@@ -36,9 +36,7 @@ export class HttpErrorFilter implements ExceptionFilter {
       payload:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
           ? exception.message
-          : `Something went wrong in ${
-              methodToMessage[method]
-            } ${getControllerName(url)}. Please try again later`,
+          : `Something went wrong. Please try again later`,
       error: true,
       url,
       method,

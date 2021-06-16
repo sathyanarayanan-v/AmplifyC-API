@@ -7,8 +7,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (res) => res.data,
   (err) => {
-    console.log(err);
-    return err;
+    return Promise.reject(err);
   },
 );
 
