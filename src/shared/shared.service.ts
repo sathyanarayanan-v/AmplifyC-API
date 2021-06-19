@@ -188,4 +188,11 @@ export class SharedService {
       incorporation_number,
     });
   }
+
+  getGstFilings(gstin: string) {
+    return gstAxiosInstance.post('api/search/taxpayerReturnDetails', {
+      gstin,
+      captcha: '000000',
+    });
+  }
 }

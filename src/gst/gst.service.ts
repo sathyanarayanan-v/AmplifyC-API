@@ -3,6 +3,7 @@ import { GstRepository } from './gst.repository';
 import {
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreateGstDto } from './dto/create-gst.dto';
@@ -83,5 +84,12 @@ export class GstService {
 
   searchTaxPayerByPan(user: any, pan: string, cookie: string, captcha: string) {
     return this.sharedService.searchGstByPan(captcha, pan, cookie);
+  }
+  async getGstFiling(user: any, gstin: string) {
+    const filings = await this.sharedService.getGstFilings(gstin);
+    if (filings.data.filingStatus) {
+      return filings.data.filingStatus[0];
+    }
+    throw new InternalServerErrorException();
   }
 }
