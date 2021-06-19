@@ -80,4 +80,8 @@ export class GstService {
     }
     return [];
   }
+
+  searchTaxPayerByPan(user: any, pan: string, cookie: string, captcha: string) {
+    return this.sharedService.searchGstByPan(captcha, pan, cookie);
+  }
 }

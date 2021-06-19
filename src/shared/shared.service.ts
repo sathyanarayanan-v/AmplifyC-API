@@ -167,6 +167,7 @@ export class SharedService {
         },
       );
       if (res.data.errorCode) {
+        console.log(res.data);
         return [];
       }
       return res.data.gstinResList;

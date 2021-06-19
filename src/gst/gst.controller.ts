@@ -79,4 +79,15 @@ export class GstController {
       incorporation_number,
     );
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('searchtp/pan')
+  searchTaxPayerByPan(
+    @CurrentUser() user: any,
+    @Body('pan') pan: string,
+    @Body('idToken') idToken: string,
+    @Body('captcha') captcha: string,
+  ) {
+    return this.gstService.searchTaxPayerByPan(user, pan, idToken, captcha);
+  }
 }
