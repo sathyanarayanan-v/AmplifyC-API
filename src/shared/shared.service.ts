@@ -195,4 +195,30 @@ export class SharedService {
       captcha: '000000',
     });
   }
+
+  getGstDetails(gstin: string, captcha: string, cookie: string) {
+    return gstAxiosInstance
+      .post(
+        'api/search/taxpayerDetails',
+        {
+          gstin,
+          captcha,
+        },
+        {
+          headers: {
+            Cookie: `CaptchaCookie=${cookie}`,
+          },
+        },
+      )
+      .then((res) => {
+        if (res.data.gstin) {
+          return res.data;
+        }
+        return Promise.reject('Something went wrong');
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.reject('Something went wrong');
+      });
+  }
 }

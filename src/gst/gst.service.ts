@@ -92,4 +92,8 @@ export class GstService {
     }
     throw new InternalServerErrorException();
   }
+
+  getGstDetails(user: any, gstin: string, captcha: string, cookie: string) {
+    return this.sharedService.getGstDetails(gstin, captcha, cookie);
+  }
 }
