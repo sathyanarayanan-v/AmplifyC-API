@@ -15,6 +15,7 @@ import { DirectorsModule } from './directors/directors.module';
 import { AffiliatesModule } from './affiliates/affiliates.module';
 import { GstModule } from './gst/gst.module';
 import { ToolsModule } from './tools/tools.module';
+import { McaFilingsModule } from './mca-filings/mca-filings.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ToolsModule } from './tools/tools.module';
     AffiliatesModule,
     GstModule,
     ToolsModule,
+    McaFilingsModule,
   ],
   controllers: [AppController],
   providers: [

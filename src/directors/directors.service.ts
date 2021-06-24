@@ -7,14 +7,15 @@ import { convertDateStringToDate } from 'src/utils';
 export class DirectorsService {
   constructor(private directorRepository: DirectorRepository) {}
 
-  async create(
-    incorporation_number: string,
-    createDirectorDto: CreateDirectorDto,
-  ) {
+  create(incorporation_number: string, createDirectorDto: CreateDirectorDto) {
     const directorDetailToSave = {
       ...createDirectorDto,
-      date_of_approval: convertDateStringToDate(
-        createDirectorDto.date_of_approval,
+      begin_date: convertDateStringToDate(
+        createDirectorDto.begin_date,
+        'DD/MM/YYYY',
+      ),
+      end_date: convertDateStringToDate(
+        createDirectorDto.end_date,
         'DD/MM/YYYY',
       ),
       incorporation_number,
@@ -34,8 +35,12 @@ export class DirectorsService {
     const director = await this.directorRepository.findOne(id);
     const directorDetailToSave = {
       ...updateDirectorDto,
-      date_of_approval: convertDateStringToDate(
-        updateDirectorDto.date_of_approval,
+      begin_date: convertDateStringToDate(
+        updateDirectorDto.begin_date,
+        'DD/MM/YYYY',
+      ),
+      end_date: convertDateStringToDate(
+        updateDirectorDto.end_date,
         'DD/MM/YYYY',
       ),
       incorporation_number: updateDirectorDto.incorporation_number,

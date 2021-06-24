@@ -31,7 +31,9 @@ export class CompaniesRepository {
         })
         .lean();
     }
-    return this.companyModel.findByIdAndUpdate(id, updateCompanyDto).lean();
+    return this.companyModel.findByIdAndUpdate(id, updateCompanyDto, {
+      new: true,
+    });
   }
 
   findCompanyByCin(incorporation_number: string) {

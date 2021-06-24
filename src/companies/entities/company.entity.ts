@@ -15,10 +15,10 @@ export class Company {
   company_name: string;
 
   @Prop({
-    type: MongooseSchema.Types.Date,
+    type: MongooseSchema.Types.String,
     required: false,
   })
-  date_of_incorporation?: Date;
+  date_of_incorporation?: string;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -99,40 +99,28 @@ export class Company {
   email?: string;
 
   @Prop({
-    type: MongooseSchema.Types.Boolean,
+    type: MongooseSchema.Types.String,
     required: false,
   })
-  listed?: boolean;
-
-  @Prop({
-    type: MongooseSchema.Types.Date,
-    required: false,
-  })
-  date_of_agm?: Date;
-
-  @Prop({
-    type: MongooseSchema.Types.Date,
-    required: false,
-  })
-  date_of_bs?: Date;
+  listed?: string;
 
   @Prop({
     type: MongooseSchema.Types.String,
     required: false,
   })
-  efiling_status?: string;
+  date_of_agm?: string;
 
   @Prop({
-    type: [MongooseSchema.Types.Mixed],
+    type: MongooseSchema.Types.String,
     required: false,
   })
-  director_det?: Array<any>;
+  date_of_bs?: string;
 
   @Prop({
-    type: [MongooseSchema.Types.Mixed],
+    type: MongooseSchema.Types.String,
     required: false,
   })
-  signatory_det?: Array<any>;
+  filing_status?: string;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
@@ -152,4 +140,46 @@ export class Company {
     required: true,
   })
   createdByModel: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  number_of_designated_partners: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  previous_desc: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  division_code: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  desc_main_division: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  date_of_statement_of_accounts_filed: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  date_of_annual_return_filed: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    required: false,
+  })
+  status: string;
 }

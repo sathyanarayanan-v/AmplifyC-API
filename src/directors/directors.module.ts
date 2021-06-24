@@ -16,5 +16,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     ]),
     SystemsModule,
   ],
+  exports: [DirectorsService, DirectorRepository],
 })
 export class DirectorsModule {}

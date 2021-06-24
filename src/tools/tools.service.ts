@@ -1,6 +1,7 @@
 import { GstService } from './../gst/gst.service';
 import { SharedService } from 'src/shared/shared.service';
 import { Injectable } from '@nestjs/common';
+import { readFileSync } from 'fs';
 
 @Injectable()
 export class ToolsService {
@@ -32,5 +33,13 @@ export class ToolsService {
 
   getGstDetails(user: any, gstin: string, captcha: string, cookie: string) {
     return this.gstService.getGstDetails(user, gstin, captcha, cookie);
+  }
+
+  readLogFile(user: any) {
+    const logs = readFileSync(process.env.LOG_FILE_ABS_PATH, {
+      encoding: 'utf-8',
+    });
+    const formattedLogs = logs.split('\n').join(',');
+    return JSON.parse(('[' + formattedLogs + ']').replace(',]', ']'));
   }
 }

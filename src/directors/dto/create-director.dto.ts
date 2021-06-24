@@ -7,15 +7,15 @@ export class CreateDirectorDto {
 
   @IsString({ message: 'date of approval is required' })
   @IsNotEmpty({ message: 'date of approval is required' })
-  date_of_approval?: string;
+  begin_date?: string;
 
   @IsString({ message: 'director name is required' })
   @IsNotEmpty({ message: 'director name is required' })
   name?: string;
 
-  @IsString({ message: 'status is required' })
-  @IsNotEmpty({ message: 'status is required' })
-  status?: string;
+  @IsString({ message: 'end_date is required' })
+  @IsNotEmpty({ message: 'end_date is required' })
+  end_date?: string;
 
   @IsString({ message: 'incorporation number is required' })
   @IsNotEmpty({ message: 'incorporation number is required' })

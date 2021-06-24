@@ -1,3 +1,5 @@
+import { DirectorsModule } from './../directors/directors.module';
+import { McaFilingsModule } from './../mca-filings/mca-filings.module';
 import { SharedModule } from 'src/shared/shared.module';
 import { SystemsService } from 'src/systems/systems.service';
 import { Company } from './entities/company.entity';
@@ -17,6 +19,8 @@ import { SystemsModule } from 'src/systems/systems.module';
     MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
     SystemsModule,
     SharedModule,
+    McaFilingsModule,
+    DirectorsModule,
   ],
 })
 export class CompaniesModule {}

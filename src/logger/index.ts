@@ -35,7 +35,7 @@ const timeStamp = () => {
 var logger = winston.createLogger({
   transports: [
     new winston.transports.File({
-      filename: './logs/app.log',
+      filename: process.env.LOG_FILE_ABS_PATH,
       level: 'silly',
     }),
   ],

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/shared/decorators/user.decorator';
 import { ToolsService } from './tools.service';
@@ -45,5 +45,11 @@ export class ToolsController {
     @Body('captcha') captcha: string,
   ) {
     return this.toolsService.getGstDetails(user, gstin, captcha, idToken);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('internal/logs')
+  getLogs(@CurrentUser() user: any) {
+    return this.toolsService.readLogFile(user);
   }
 }

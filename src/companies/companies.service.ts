@@ -1,5 +1,7 @@
+import { McaFiling } from './../mca-filings/entities/mca-filing.entity';
+import { DirectorsService } from './../directors/directors.service';
+import { McaFilingsService } from './../mca-filings/mca-filings.service';
 import { SharedService } from 'src/shared/shared.service';
-import { convertDateStringToDate } from 'src/utils';
 import { loggerInstance } from 'src/logger';
 import { System } from './../systems/entities/system.entity';
 import { User } from './../users/entities/user.entity';
@@ -7,12 +9,15 @@ import { CompaniesRepository } from './companies.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { CreateDirectorDto } from 'src/directors/dto/create-director.dto';
 
 @Injectable()
 export class CompaniesService {
   constructor(
     private companiesRepository: CompaniesRepository,
     private sharedService: SharedService,
+    private mcaFilingService: McaFilingsService,
+    private directorService: DirectorsService,
   ) {}
   async create(user: any, createCompanyDto: CreateCompanyDto) {
     try {
@@ -43,8 +48,16 @@ export class CompaniesService {
     return this.companiesRepository.findOne(id);
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  update(
+    id: string,
+    updateCompanyDto: UpdateCompanyDto,
+    incorporation_number?: string,
+  ) {
+    return this.companiesRepository.update(
+      id,
+      updateCompanyDto,
+      incorporation_number,
+    );
   }
 
   remove(id: number) {
@@ -59,18 +72,6 @@ export class CompaniesService {
       ...updateCompanyDto,
       listed: updateCompanyDto['listed'] === 'true',
     };
-    if (updateCompanyDto.date_of_agm) {
-      modifiedUpdateCompanyDto['date_of_agm'] = convertDateStringToDate(
-        updateCompanyDto.date_of_agm,
-        'DD/MM/YYYY',
-      );
-    }
-    if (updateCompanyDto.date_of_bs) {
-      modifiedUpdateCompanyDto['date_of_bs'] = convertDateStringToDate(
-        updateCompanyDto.date_of_bs,
-        'DD/MM/YYYY',
-      );
-    }
     return this.companiesRepository.update(
       null,
       modifiedUpdateCompanyDto,
@@ -84,5 +85,63 @@ export class CompaniesService {
 
   searchCompanyName(user: any, company_name: string) {
     return this.sharedService.checkCompanyName(company_name);
+  }
+
+  async storeMasterData(user: any, id: string) {
+    const company = await this.companiesRepository.findOne(id);
+    return this.saveMasterData(company.incorporation_number);
+  }
+
+  async storeMcaFilings(user: any, id: string) {
+    const company = await this.companiesRepository.findOne(id);
+    return this.saveFilings(company.incorporation_number);
+  }
+
+  private async saveMasterData(incorporation_number: string) {
+    let masterData = null;
+    try {
+      masterData = await this.sharedService.getCompanyMasterData(
+        incorporation_number,
+      );
+      await Promise.all(
+        masterData.directors.map((director: CreateDirectorDto) =>
+          this.directorService.create(incorporation_number, director),
+        ),
+      );
+    } catch (error) {
+      loggerInstance.log(
+        incorporation_number + ' :: ' + error,
+        'error',
+        'MasterDataError',
+      );
+    }
+    return this.update(null, masterData as any, incorporation_number);
+  }
+
+  private async saveFilings(incorporation_number: string) {
+    try {
+      const res: any = await this.sharedService.getMcaFilings(
+        incorporation_number,
+      );
+      const filings = res.filings;
+      await Promise.all(
+        filings.map((filing: any) => {
+          const _filing = {
+            ...filing,
+            incorporation_number: incorporation_number,
+          };
+          return this.mcaFilingService.create(_filing);
+        }),
+      );
+    } catch (error) {
+      loggerInstance.log(
+        incorporation_number + ' :: ' + error,
+        'error',
+        'MCAFilingsError',
+      );
+    }
+    return this.mcaFilingService.findAll({
+      incorporation_number: incorporation_number,
+    });
   }
 }

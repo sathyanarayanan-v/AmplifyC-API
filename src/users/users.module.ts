@@ -1,3 +1,5 @@
+import { DirectorsModule } from './../directors/directors.module';
+import { McaFilingsModule } from './../mca-filings/mca-filings.module';
 import { CompaniesModule } from './../companies/companies.module';
 import { CompaniesService } from './../companies/companies.service';
 import { AffiliatesService } from './../affiliates/affiliates.service';
@@ -24,6 +26,8 @@ import { SharedModule } from 'src/shared/shared.module';
     SystemsModule,
     AffiliatesModule,
     CompaniesModule,
+    McaFilingsModule,
+    DirectorsModule,
   ],
   controllers: [UsersController],
   providers: [

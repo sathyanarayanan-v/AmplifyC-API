@@ -13,13 +13,19 @@ export class Director {
     type: MongooseSchema.Types.String,
     required: true,
   })
-  din: string;
+  'din/pan': string;
 
   @Prop({
     type: MongooseSchema.Types.Date,
-    required: true,
+    required: false,
   })
-  date_of_approval: Date;
+  begin_date: Date;
+
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    required: false,
+  })
+  end_date: Date;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -29,7 +35,7 @@ export class Director {
 
   @Prop({
     type: MongooseSchema.Types.String,
-    required: true,
+    required: false,
   })
   status: string;
 }
