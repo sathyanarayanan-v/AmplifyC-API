@@ -93,7 +93,21 @@ export class GstService {
     throw new InternalServerErrorException();
   }
 
-  getGstDetails(user: any, gstin: string, captcha: string, cookie: string) {
-    return this.sharedService.getGstDetails(gstin, captcha, cookie);
+  async getGstDetails(
+    user: any,
+    gstin: string,
+    captcha: string,
+    cookie: string,
+  ) {
+    try {
+      const details = await this.sharedService.getGstDetails(
+        gstin,
+        captcha,
+        cookie,
+      );
+      return details;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 }

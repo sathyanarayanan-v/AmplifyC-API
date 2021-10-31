@@ -178,9 +178,14 @@ export class SharedService {
   }
 
   getCompanyMasterData(incorporation_number: string) {
-    return taskAxiosInstance.post('companies/master-data', {
-      incorporation_number,
-    });
+    return taskAxiosInstance
+      .post('companies/master-data', {
+        incorporation_number,
+      })
+      .catch((err) => {
+        console.log(err);
+        return Promise.reject(err);
+      });
   }
 
   getMcaFilings(incorporation_number: string) {
@@ -211,6 +216,7 @@ export class SharedService {
         },
       )
       .then((res) => {
+        console.log(res.data);
         if (res.data.gstin) {
           return res.data;
         }
